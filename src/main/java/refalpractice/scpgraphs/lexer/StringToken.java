@@ -15,4 +15,8 @@ public class StringToken extends Token {
     public String getValue() {
         return s;
     }
+
+    public String toInternal() {
+        return s;
+    }
 }

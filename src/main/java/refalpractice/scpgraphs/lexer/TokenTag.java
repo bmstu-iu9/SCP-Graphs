@@ -24,8 +24,17 @@ public class TokenTag {
 		"EOF", "LPAREN", "RPAREN", "NODE", "CHILDREN", "LOOPED", "TO", "ASSIGN", "STAR", "CALL", "ARG",
 		"PAR", "E", "S", "T", "LET", "IN", "IDENT"
 	};
+
+	private static final String[] TAG_INT_TO_INTERNAL = {
+			null, "(", ")", "Node", "Children", "Looped", "to", "assign", "*", "call", "arg",
+			"par", "e", "s", "t", "let", "in", null
+	};
 	
 	public static String tagToString(int tag) {
 		return TAG_INT_TO_STRING[tag];
+	}
+
+	public static String tagToInternal(int tag) {
+		return TAG_INT_TO_INTERNAL[tag];
 	}
 }
