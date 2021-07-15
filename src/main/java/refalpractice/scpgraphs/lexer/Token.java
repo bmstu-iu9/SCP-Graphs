@@ -13,7 +13,7 @@ public class Token {
 	}
 	
 	public String toString() {
-		return TokenTag.tagToString(tag) + ": (" + line1 + ", " + column1 + ")-(" + line2 + ", " + column2 + ")";
+		return TokenTag.tagToString(tag) + " (" + line1 + ", " + column1 + ")-(" + line2 + ", " + column2 + ")";
 	}
 	
 	public int getTag() {

@@ -13,7 +13,7 @@ public class LexicErrorDesc {
 	}
 	
 	public String toString() {
-		return str + ": (" + line1 + ", " + column1 + ")-(" + line2 + ", " + column2 + ")";
+		return "lexic-error (" + line1 + ", " + column1 + ")-(" + line2 + ", " + column2 + "): " + str;
 	}
 	
 	public String getString() {

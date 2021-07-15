@@ -27,6 +27,6 @@ public class LexerTest {
 
 	@Test
 	public void test2() throws Exception {
-		runLexer("(Node () + in to too 2to\r\n - ___-__\n\r hhh to)", "LEXER TEST 2");
+		runLexer("(Node () + * in to too 2to\r\n - ___-__\n\r hhh to)", "LEXER TEST 2");
 	}
 }

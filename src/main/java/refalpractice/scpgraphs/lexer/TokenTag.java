@@ -18,10 +18,11 @@ public class TokenTag {
 	public static final int T = 14;
 	public static final int LET = 15;
 	public static final int IN = 16;
+	public static final int IDENT = 17;
 	
 	private static final String[] TAG_INT_TO_STRING = {
 		"EOF", "LPAREN", "RPAREN", "NODE", "CHILDREN", "LOOPED", "TO", "ASSIGN", "STAR", "CALL", "ARG",
-		"PAR", "E", "S", "T", "LET", "IN"
+		"PAR", "E", "S", "T", "LET", "IN", "IDENT"
 	};
 	
 	public static String tagToString(int tag) {

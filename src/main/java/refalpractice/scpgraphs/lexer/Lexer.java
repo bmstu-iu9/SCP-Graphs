@@ -8,7 +8,32 @@ public class Lexer {
 	private Position pos;
 	private ArrayList<LexicErrorDesc> errs = new ArrayList<>();
 	private Token nextToken;
-	
+
+	private static final HashMap<String, Integer> KEYWORD = new HashMap<>();
+	static {
+		KEYWORD.put("Node", TokenTag.NODE);
+		KEYWORD.put("Children", TokenTag.CHILDREN);
+		KEYWORD.put("Looped", TokenTag.LOOPED);
+		KEYWORD.put("to", TokenTag.TO);
+		KEYWORD.put("assign", TokenTag.ASSIGN);
+		KEYWORD.put("call", TokenTag.CALL);
+		KEYWORD.put("arg", TokenTag.ARG);
+		KEYWORD.put("par", TokenTag.PAR);
+		KEYWORD.put("e", TokenTag.E);
+		KEYWORD.put("s", TokenTag.S);
+		KEYWORD.put("t", TokenTag.T);
+		KEYWORD.put("let", TokenTag.LET);
+		KEYWORD.put("in", TokenTag.IN);
+	}
+
+	private static final HashMap<Integer, Integer> SPECSYMBOL = new HashMap<>();
+	static {
+		SPECSYMBOL.put(-1, TokenTag.EOF);
+		SPECSYMBOL.put((int)'(', TokenTag.LPAREN);
+		SPECSYMBOL.put((int)')', TokenTag.RPAREN);
+		SPECSYMBOL.put((int)'*', TokenTag.STAR);
+	}
+
 	private void tokenizeWord() throws Exception {
 		int line1 = pos.getLine();
 		int column1 = pos.getColumn();
@@ -16,7 +41,7 @@ public class Lexer {
 		int column2 = column1;
 		StringBuilder sb = new StringBuilder();
 		
-		for (int c = pos.peek(); c > 0 && (Character.isLetterOrDigit((char)c) || c == '_'); c = pos.peek()) {
+		for (int c = pos.peek(); c > 0 && (Character.isLetterOrDigit((char)c)); c = pos.peek()) {
 			line2 = pos.getLine();
 			column2 = pos.getColumn();
 			sb.append((char)c);
@@ -24,34 +49,22 @@ public class Lexer {
 		}
 		
 		String s = sb.toString();
-		if (s.equals("Node"))
-			nextToken = new Token(TokenTag.NODE, line1, column1, line2, column2);
-		else if (s.equals("Children"))
-			nextToken = new Token(TokenTag.CHILDREN, line1, column1, line2, column2);
-		else if (s.equals("Looped"))
-			nextToken = new Token(TokenTag.LOOPED, line1, column1, line2, column2);
-		else if (s.equals("to"))
-			nextToken = new Token(TokenTag.TO, line1, column1, line2, column2);
-		else if (s.equals("assign"))
-			nextToken = new Token(TokenTag.ASSIGN, line1, column1, line2, column2);
-		else if (s.equals("call"))
-			nextToken = new Token(TokenTag.CALL, line1, column1, line2, column2);
-		else if (s.equals("arg"))
-			nextToken = new Token(TokenTag.ARG, line1, column1, line2, column2);
-		else if (s.equals("par"))
-			nextToken = new Token(TokenTag.PAR, line1, column1, line2, column2);
-		else if (s.equals("e"))
-			nextToken = new Token(TokenTag.E, line1, column1, line2, column2);
-		else if (s.equals("s"))
-			nextToken = new Token(TokenTag.S, line1, column1, line2, column2);
-		else if (s.equals("t"))
-			nextToken = new Token(TokenTag.T, line1, column1, line2, column2);
-		else if (s.equals("let"))
-			nextToken = new Token(TokenTag.LET, line1, column1, line2, column2);
-		else if (s.equals("in"))
-			nextToken = new Token(TokenTag.IN, line1, column1, line2, column2);
+		Integer keyword = KEYWORD.get(s);
+		if (keyword != null)
+			nextToken = new Token(keyword, line1, column1, line2, column2);
 		else
-			errs.add(new LexicErrorDesc(s, line1, column1, line2, column2));
+			nextToken = new StringToken(TokenTag.IDENT, s, line1, column1, line2, column2);
+	}
+
+	private void tokenizeSymbol() throws Exception {
+		int c = pos.peek();
+		Integer specsymbol = SPECSYMBOL.get(c);
+		if (specsymbol != null)
+			nextToken = new Token(specsymbol, pos.getLine(), pos.getColumn(), pos.getLine(), pos.getColumn());
+		else
+			errs.add(new LexicErrorDesc(Character.toString((char)c), pos.getLine(), pos.getColumn(), pos.getLine(), pos.getColumn()));
+
+		pos.next();
 	}
 	
 	private void skipWhiteSymbols() throws Exception {
@@ -70,32 +83,11 @@ public class Lexer {
 			skipWhiteSymbols();
 			
 			int c = pos.peek();
-			
-			switch (c) {
-				case '(':
-					nextToken = new Token(TokenTag.LPAREN, pos.getLine(), pos.getColumn(), pos.getLine(), pos.getColumn());
-					pos.next();
-					break;
-				case ')':
-					nextToken = new Token(TokenTag.RPAREN, pos.getLine(), pos.getColumn(), pos.getLine(), pos.getColumn());
-					pos.next();
-					break;
-				case '*':
-					nextToken = new Token(TokenTag.STAR, pos.getLine(), pos.getColumn(), pos.getLine(), pos.getColumn());
-					pos.next();
-					break;
-				case -1:
-					nextToken = new Token(TokenTag.EOF, pos.getLine(), pos.getColumn(), pos.getLine(), pos.getColumn());
-					pos.next();
-					break;
-				default:
-					if (Character.isLetterOrDigit((char)c) || c == '_')
-						tokenizeWord();
-					else {
-						errs.add(new LexicErrorDesc(Character.toString((char)c), pos.getLine(), pos.getColumn(), pos.getLine(), pos.getColumn()));
-						pos.next();
-					}
-			}
+
+			if (Character.isLetterOrDigit((char)c))
+				tokenizeWord();
+			else
+				tokenizeSymbol();
 		}
 	}
 	
