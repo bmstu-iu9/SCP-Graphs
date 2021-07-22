@@ -24,4 +24,12 @@ public class ParenGroup {
     public void add(Token t) {
         tokens.add(t);
     }
+
+    public ArrayList<Token> getTokens() {
+        return tokens;
+    }
+
+    public void trimTail() {
+        tokens.remove(tokens.size() - 1);
+    }
 }
