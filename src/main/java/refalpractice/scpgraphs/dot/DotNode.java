@@ -1,63 +1,62 @@
 package refalpractice.scpgraphs.dot;
 
-import refalpractice.scpgraphs.parser.ChildrenNode;
-import refalpractice.scpgraphs.parser.LoopedNode;
-import refalpractice.scpgraphs.parser.Node;
+import refalpractice.scpgraphs.encoder.EncodedChildrenNode;
+import refalpractice.scpgraphs.encoder.EncodedLoopedNode;
+import refalpractice.scpgraphs.encoder.EncodedNode;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class DotNode {
-    private Node node;
+    private EncodedNode node;
     private StringBuilder dotRepresentation = new StringBuilder();
 
-    public DotNode(Node node) {
+    public DotNode(EncodedNode node) {
         this.node = node;
     }
 
     public String ToDot() {
         dotRepresentation.append("digraph SCPGraph {\n");
+        dotRepresentation.append("node[shape=box, style=rounded]\n");
         dotRepresentation.append(ToDotNode(node));
         dotRepresentation.append("}");
         return dotRepresentation.toString();
     }
 
-    private String ToDotNode(Node node) {
+    private String ToDotNode(EncodedNode node) {
         StringBuilder dotNode = new StringBuilder();
 
         String nodeName = GetNodeName(node.name);
 
         dotNode.append(nodeName);
-        dotNode.append("[label = \"Name: ");
+        dotNode.append("[label = <<table border=\"0\"><tr><td align=\"text\">Name: ");
         dotNode.append(nodeName);
-        dotNode.append("\\n");
+        dotNode.append("<br align=\"left\" /></td></tr>");
 
-        dotNode.append("Status: ");
-        dotNode.append(node.status.toInternal());
-        dotNode.append("\\n");
+        dotNode.append("<tr><td align=\"text\">NodeData: ");
+        dotNode.append(node.nodeData.replaceAll("->", "-&gt;"));
+        dotNode.append("<br align=\"left\" /></td></tr></table>>];\n");
 
-        dotNode.append("NodeData: ");
-        dotNode.append(node.nodeData.toInternal());
-        dotNode.append("\"];\n");
-
-        if (node.subNode instanceof ChildrenNode) {
-            ChildrenNode children = (ChildrenNode)node.subNode;
-            for (Node childrenNode : children.nodes) {
+        if (node.subNode instanceof EncodedChildrenNode) {
+            EncodedChildrenNode children = (EncodedChildrenNode)node.subNode;
+            for (EncodedNode childrenNode : children.nodes) {
                 dotNode.append(nodeName);
                 dotNode.append("->");
                 dotNode.append(GetNodeName(childrenNode.name));
-                dotNode.append("[label = \"");
-                dotNode.append(node.edge.toInternal());
-                dotNode.append("\"];\n");
+                dotNode.append("[label = <<table border=\"0\"><tr><td align=\"text\">");
+                if (!Objects.equals(node.edge, "()"))
+                    dotNode.append(node.edge.replaceAll("->", "-&gt;"));
+                dotNode.append("<br align=\"left\" /></td></tr></table>>];\n");
                 dotNode.append(ToDotNode(childrenNode));
             }
-        } else if (node.subNode instanceof LoopedNode) {
-            LoopedNode loopedNode = (LoopedNode)node.subNode;
+        } else if (node.subNode instanceof EncodedLoopedNode) {
+            EncodedLoopedNode loopedNode = (EncodedLoopedNode)node.subNode;
             dotNode.append(nodeName);
             dotNode.append("->");
-            dotNode.append(loopedNode.name);
-            dotNode.append("[style=dashed, label = \"");
-            dotNode.append(loopedNode.assignment.toInternal());
-            dotNode.append("\"];\n");
+            dotNode.append(GetNodeName(loopedNode.name));
+            dotNode.append("[style=dashed, label = <<table border=\"0\"><tr><td align=\"text\">");
+            dotNode.append(loopedNode.assignment.replaceAll("->", "-&gt;"));
+            dotNode.append("<br align=\"left\" /></td></tr></table>>];\n");
         }
         return dotNode.toString();
     }
