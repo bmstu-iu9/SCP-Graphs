@@ -17,10 +17,33 @@ public class DotNode {
 
     public String ToDot() {
         dotRepresentation.append("digraph SCPGraph {\n");
-        dotRepresentation.append("node[shape=box, style=rounded]\n");
+        dotRepresentation.append("node[shape=octagon, style=rounded]\n");
         dotRepresentation.append(ToDotNode(node));
         dotRepresentation.append("}");
         return dotRepresentation.toString();
+    }
+
+    private boolean isEmptyLabel(String label) {
+        return  label.equals("(() ())");
+    }
+
+    private String ToDotNodeData(EncodedNode node, boolean isLetNode) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("<tr><td align=\"text\"><font face=\"Courier\">");
+        if (isLetNode) {
+            sb.append("Let");
+            sb.append(node.nodeData, 1, node.nodeData.length() - 1);
+        } else {
+            if (!isEmptyLabel(node.nodeData)) {
+                sb.append(node.nodeData, 5, node.nodeData.length() - 2);
+            } else {
+                sb.append("\u03b5");
+            }
+        }
+        sb.append("</font><br align=\"left\" /></td></tr></table>>];\n");
+
+        return sb.toString();
     }
 
     private String ToDotNode(EncodedNode node) {
@@ -28,14 +51,18 @@ public class DotNode {
 
         String nodeName = GetNodeName(node.name);
 
-        dotNode.append(nodeName);
-        dotNode.append("[label = <<table border=\"0\"><tr><td align=\"text\">Name: ");
-        dotNode.append(nodeName);
-        dotNode.append("<br align=\"left\" /></td></tr>");
+        boolean isLetNode = false;
 
-        dotNode.append("<tr><td align=\"text\">NodeData: ");
-        dotNode.append(node.nodeData.replaceAll("->", "-&gt;"));
-        dotNode.append("<br align=\"left\" /></td></tr></table>>];\n");
+        if (node.nodeData.contains("in")) {
+            dotNode.append(nodeName);
+            dotNode.append("[shape=doubleoctagon]\n");
+            isLetNode = true;
+        }
+
+        dotNode.append(nodeName);
+        dotNode.append("[label = <<table border=\"0\">");
+
+        dotNode.append(ToDotNodeData(node, isLetNode));
 
         if (node.subNode instanceof EncodedChildrenNode) {
             EncodedChildrenNode children = (EncodedChildrenNode)node.subNode;
@@ -43,10 +70,13 @@ public class DotNode {
                 dotNode.append(nodeName);
                 dotNode.append("->");
                 dotNode.append(GetNodeName(childrenNode.name));
-                dotNode.append("[label = <<table border=\"0\"><tr><td align=\"text\">");
-                if (!Objects.equals(node.edge, "()"))
-                    dotNode.append(node.edge.replaceAll("->", "-&gt;"));
-                dotNode.append("<br align=\"left\" /></td></tr></table>>];\n");
+                dotNode.append("[label = <<table border=\"0\"><tr><td align=\"text\"><font face=\"Courier\">");
+                if (Objects.equals(childrenNode.edge, "\u03b5")) {
+                    dotNode.append("\u03b5");
+                } else {
+                    dotNode.append(childrenNode.edge, 1, childrenNode.edge.length() - 1);
+                }
+                dotNode.append("</font><br align=\"left\" /></td></tr></table>>];\n");
                 dotNode.append(ToDotNode(childrenNode));
             }
         } else if (node.subNode instanceof EncodedLoopedNode) {
@@ -54,9 +84,13 @@ public class DotNode {
             dotNode.append(nodeName);
             dotNode.append("->");
             dotNode.append(GetNodeName(loopedNode.name));
-            dotNode.append("[style=dashed, label = <<table border=\"0\"><tr><td align=\"text\">");
-            dotNode.append(loopedNode.assignment.replaceAll("->", "-&gt;"));
-            dotNode.append("<br align=\"left\" /></td></tr></table>>];\n");
+            dotNode.append("[style=dashed, label = <<table border=\"0\"><tr><td align=\"text\"><font face=\"Courier\">");
+            if (Objects.equals(loopedNode.assignment, "\u03b5")) {
+                dotNode.append("\u03b5");
+            } else {
+                dotNode.append(loopedNode.assignment, 1, loopedNode.assignment.length() - 1);
+            }
+            dotNode.append("</font><br align=\"left\" /></td></tr></table>>];\n");
         }
         return dotNode.toString();
     }
