@@ -274,7 +274,12 @@ public class Encoder {
         if (pos.isLastToken()) {
             sb.append(pos.current().toInternal());
         }
-        return sb.toString();
+
+        String encodedExpression = sb.toString();
+        if (encodedExpression.compareTo("()") == 0) {
+            encodedExpression = EMPTY;
+        }
+        return encodedExpression;
     }
 
     public ParenGroup getSubExpr(Position pos) {
