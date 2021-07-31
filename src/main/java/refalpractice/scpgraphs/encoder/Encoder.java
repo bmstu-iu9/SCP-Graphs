@@ -11,8 +11,8 @@ import java.util.HashMap;
 
 public class Encoder {
     private final String POINT = ".", COMMA = ",", SPACE = " ", LEFT_PAREN = "(", RIGHT_PAREN = ")", SEMICOLON = ";",
-            LEFT_ANGLE_PAREN = "&lt;", RIGHT_ANGLE_PAREN = "&gt;", ASSIGNMENT = ":=", ARROW = "\u2192",
-            EMPTY = "\u03b5", OPEN_SUB = "<SUB>", CLOSE_SUB = "</SUB>",
+            LEFT_ANGLE_PAREN = "&lt;", RIGHT_ANGLE_PAREN = "&gt;", ASSIGNMENT = ":=", ARROW = "&rarr;",
+            EMPTY = "&epsilon;", OPEN_SUB = "<SUB>", CLOSE_SUB = "</SUB>",
             DEFAULT_KEY = "", REF_KEY = "-ref", TRS_KEY = "-trs";
     private final int ZERO = 0, ONE = 1, NUMBER_OF_PARAMETER_TOKENS = 5;
 

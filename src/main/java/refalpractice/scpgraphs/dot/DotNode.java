@@ -38,7 +38,7 @@ public class DotNode {
             if (!isEmptyLabel(node.nodeData)) {
                 sb.append(node.nodeData, 5, node.nodeData.length() - 2);
             } else {
-                sb.append("\u03b5");
+                sb.append("&epsilon;");
             }
         }
         sb.append("</font><br align=\"left\" /></td></tr></table>>];\n");
@@ -71,8 +71,8 @@ public class DotNode {
                 dotNode.append("->");
                 dotNode.append(GetNodeName(childrenNode.name));
                 dotNode.append("[label = <<table border=\"0\"><tr><td align=\"text\"><font face=\"Courier\">");
-                if (Objects.equals(childrenNode.edge, "\u03b5")) {
-                    dotNode.append("\u03b5");
+                if (Objects.equals(childrenNode.edge, "&epsilon;")) {
+                    dotNode.append("&epsilon;");
                 } else {
                     dotNode.append(childrenNode.edge, 1, childrenNode.edge.length() - 1);
                 }
@@ -85,8 +85,8 @@ public class DotNode {
             dotNode.append("->");
             dotNode.append(GetNodeName(loopedNode.name));
             dotNode.append("[style=dashed, label = <<table border=\"0\"><tr><td align=\"text\"><font face=\"Courier\">");
-            if (Objects.equals(loopedNode.assignment, "\u03b5")) {
-                dotNode.append("\u03b5");
+            if (Objects.equals(loopedNode.assignment, "&epsilon;")) {
+                dotNode.append("&epsilon;");
             } else {
                 dotNode.append(loopedNode.assignment, 1, loopedNode.assignment.length() - 1);
             }
