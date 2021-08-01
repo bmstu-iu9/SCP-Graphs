@@ -71,8 +71,8 @@ public class DotNode {
                 dotNode.append("->");
                 dotNode.append(GetNodeName(childrenNode.name));
                 dotNode.append("[label = <<table border=\"0\"><tr><td align=\"text\"><font face=\"Courier\">");
-                if (Objects.equals(childrenNode.edge, "&epsilon;")) {
-                    dotNode.append("&epsilon;");
+                if (Objects.equals(childrenNode.edge, "")) {
+                    dotNode.append(" ");
                 } else {
                     dotNode.append(childrenNode.edge, 1, childrenNode.edge.length() - 1);
                 }
