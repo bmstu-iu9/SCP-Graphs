@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class DotNode {
+    private final String EPSILON = "&epsilon;", LET = "Let", IN = "in", DOT_ARROW = "->",
+                         EMPTY_LABEL = "(() ())";
+
     private EncodedNode node;
     private StringBuilder dotRepresentation = new StringBuilder();
 
@@ -24,7 +27,7 @@ public class DotNode {
     }
 
     private boolean isEmptyLabel(String label) {
-        return  label.equals("(() ())");
+        return  label.equals(EMPTY_LABEL);
     }
 
     private String ToDotNodeData(EncodedNode node, boolean isLetNode) {
@@ -32,13 +35,13 @@ public class DotNode {
 
         sb.append("<tr><td align=\"text\"><font face=\"Courier\">");
         if (isLetNode) {
-            sb.append("Let");
+            sb.append(LET);
             sb.append(node.nodeData, 1, node.nodeData.length() - 1);
         } else {
             if (!isEmptyLabel(node.nodeData)) {
                 sb.append(node.nodeData, 5, node.nodeData.length() - 2);
             } else {
-                sb.append("&epsilon;");
+                sb.append(EPSILON);
             }
         }
         sb.append("</font><br align=\"left\" /></td></tr></table>>];\n");
@@ -53,7 +56,7 @@ public class DotNode {
 
         boolean isLetNode = false;
 
-        if (node.nodeData.contains("in")) {
+        if (node.nodeData.contains(IN)) {
             dotNode.append(nodeName);
             dotNode.append("[shape=doubleoctagon]\n");
             isLetNode = true;
@@ -68,11 +71,11 @@ public class DotNode {
             EncodedChildrenNode children = (EncodedChildrenNode)node.subNode;
             for (EncodedNode childrenNode : children.nodes) {
                 dotNode.append(nodeName);
-                dotNode.append("->");
+                dotNode.append(DOT_ARROW);
                 dotNode.append(GetNodeName(childrenNode.name));
                 dotNode.append("[label = <<table border=\"0\"><tr><td align=\"text\"><font face=\"Courier\">");
-                if (Objects.equals(childrenNode.edge, "&epsilon;")) {
-                    dotNode.append("&epsilon;");
+                if (Objects.equals(childrenNode.edge, EPSILON)) {
+                    dotNode.append(EPSILON);
                 } else {
                     dotNode.append(childrenNode.edge, 1, childrenNode.edge.length() - 1);
                 }
@@ -82,11 +85,11 @@ public class DotNode {
         } else if (node.subNode instanceof EncodedLoopedNode) {
             EncodedLoopedNode loopedNode = (EncodedLoopedNode)node.subNode;
             dotNode.append(nodeName);
-            dotNode.append("->");
+            dotNode.append(DOT_ARROW);
             dotNode.append(GetNodeName(loopedNode.name));
             dotNode.append("[style=dashed, label = <<table border=\"0\"><tr><td align=\"text\"><font face=\"Courier\">");
-            if (Objects.equals(loopedNode.assignment, "&epsilon;")) {
-                dotNode.append("&epsilon;");
+            if (Objects.equals(loopedNode.assignment, EPSILON)) {
+                dotNode.append(EPSILON);
             } else {
                 dotNode.append(loopedNode.assignment, 1, loopedNode.assignment.length() - 1);
             }
