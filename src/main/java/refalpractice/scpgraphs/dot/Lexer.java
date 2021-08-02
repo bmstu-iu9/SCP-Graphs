@@ -16,9 +16,11 @@ enum TYPES {
     ASSIGN,
     SEMICOLON,
     EPSILON,
-    ENUMBER,
-    ELITER,
-    IDENT
+    E_NUMBER,
+    E_LITER,
+    IDENT,
+    E_NUMBER_TRS,
+    E_LITER_TRS
 }
 
 class Position {
@@ -37,7 +39,7 @@ class Position {
         this.pos = pos;
     }
 
-    void next_line() {
+    void nextLine() {
         this.line += 1;
         this.pos = 1;
     }
@@ -109,6 +111,8 @@ public class Lexer {
         String epsilonTemplate = "&epsilon;";
         String eNumberTemplate = "e\\.\\d+";
         String eLiterTemplate = "e\\.\\w+";
+        String eNumberTRSTemplate = "e<SUB>\\d+</SUB>";
+        String eLiterTRSTemplate = "e<SUB>\\w+</SUB>";
         String identTemplate = "\\S+";
 
         String pattern = "(?<lparen>^" + lParenTemplate + ")" +
@@ -122,6 +126,8 @@ public class Lexer {
                 "|(?<epsilon>^" + epsilonTemplate + ")" +
                 "|(?<enumber>^" + eNumberTemplate + ")" +
                 "|(?<eliter>^" + eLiterTemplate + ")" +
+                "|(?<enumbertrs>^" + eNumberTRSTemplate + ")" +
+                "|(?<elitertrs>^" + eLiterTRSTemplate + ")" +
                 "|(?<ident>^" + identTemplate + ")";
 
         Pattern p = Pattern.compile(pattern);
@@ -189,13 +195,25 @@ public class Lexer {
                     line = line.substring(line.indexOf(item) + item.length());
                 } else if (m.group("enumber") != null) {
                     String item = m.group("enumber");
-                    Match match = new Match(pos, item, TYPES.ENUMBER);
+                    Match match = new Match(pos, item, TYPES.E_NUMBER);
                     matches.add(match);
                     pos.nextPos(item.length());
                     line = line.substring(line.indexOf(item) + item.length());
                 } else if (m.group("eliter") != null) {
                     String item = m.group("eliter");
-                    Match match = new Match(pos, item, TYPES.ELITER);
+                    Match match = new Match(pos, item, TYPES.E_LITER);
+                    matches.add(match);
+                    pos.nextPos(item.length());
+                    line = line.substring(line.indexOf(item) + item.length());
+                } else if (m.group("elitertrs") != null) {
+                    String item = m.group("elitertrs");
+                    Match match = new Match(pos, item, TYPES.E_LITER_TRS);
+                    matches.add(match);
+                    pos.nextPos(item.length());
+                    line = line.substring(line.indexOf(item) + item.length());
+                } else if (m.group("enumbertrs") != null) {
+                    String item = m.group("enumbertrs");
+                    Match match = new Match(pos, item, TYPES.E_NUMBER_TRS);
                     matches.add(match);
                     pos.nextPos(item.length());
                     line = line.substring(line.indexOf(item) + item.length());
@@ -209,7 +227,7 @@ public class Lexer {
             } else {
                 if (line.charAt(0) == '\n') {
                     line = line.substring(1);
-                    pos.next_line();
+                    pos.nextLine();
                 } else if (Character.isWhitespace(line.charAt(0))) {
                     while (Character.isWhitespace(line.charAt(0))) {
                         line = line.substring(1);

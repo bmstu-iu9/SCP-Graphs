@@ -45,7 +45,9 @@ public class DotNode {
                 sb.append(match.value);
                 sb.append("</font><br align=\"left\" /></td></tr>");
                 sb.append("<tr><td align=\"text\"><font face=\"Courier\">");
-            } else if (match.type == TYPES.ELITER || match.type == TYPES.ENUMBER || match.type == TYPES.EPSILON) {
+            } else if (match.type == TYPES.E_LITER || match.type == TYPES.E_NUMBER
+                    || match.type == TYPES.EPSILON || match.type == TYPES.E_LITER_TRS
+                    || match.type == TYPES.E_NUMBER_TRS) {
                 sb.append(match.value);
             } else if (match.type == TYPES.SEMICOLON) {
                 sb.append(match.value);
@@ -66,14 +68,13 @@ public class DotNode {
                 sb.append("</font><br align=\"left\" /></td></tr>");
                 sb.append("<tr><td align=\"text\"><font face=\"Courier\">");
             } else if (match.type == TYPES.LPAREN) {
-                //System.out.println(letLabel.substring(match.pos, letLabel.length() - 1));
                 sb.append(beatufiyParenLabel(label.substring(match.pos, label.length() - 1)));
                 break;
             } else {
                 sb.append(SPACE);
             }
         }
-        //sb.append(SPACE);
+
         return sb.toString();
     }
 
@@ -86,46 +87,51 @@ public class DotNode {
         Integer curLen = 0;
 
         stackLenOfLabel.push(0);
-        while (iterator.hasNext()) {
-            Match match = iterator.next();
-            if (match.type ==  TYPES.LT) {
-                String repeatedSpace = new String(new char[curLen]).replace("\0", SPACE);
-                sb.append(repeatedSpace);
-                sb.append(match.value);
-                match = iterator.next();
-                sb.append(match.value);
-                stackLenOfLabel.push(1 + match.value.length());
-                curLen += stackLenOfLabel.peek();
-                sb.append("</font><br align=\"left\" /></td></tr>");
-                sb.append("<tr><td align=\"text\"><font face=\"Courier\">");
-            } else if (match.type == TYPES.LPAREN) {
-                String repeatedSpace = new String(new char[curLen]).replace("\0", SPACE);
-                sb.append(repeatedSpace);
-                while(match.type != TYPES.RPAREN) {
+
+        if (label.contains("&gt;")) {
+            while (iterator.hasNext()) {
+                Match match = iterator.next();
+                if (match.type ==  TYPES.LT) {
+                    String repeatedSpace = new String(new char[curLen]).replace("\0", SPACE);
+                    sb.append(repeatedSpace);
+                    sb.append(match.value);
                     match = iterator.next();
                     sb.append(match.value);
-                    sb.append(SPACE);
+                    stackLenOfLabel.push(1 + match.value.length());
+                    curLen += stackLenOfLabel.peek();
+                    sb.append("</font><br align=\"left\" /></td></tr>");
+                    sb.append("<tr><td align=\"text\"><font face=\"Courier\">");
+                } else if (match.type == TYPES.LPAREN) {
+                    String repeatedSpace = new String(new char[curLen]).replace("\0", SPACE);
+                    sb.append(repeatedSpace);
+                    while(match.type != TYPES.RPAREN) {
+                        match = iterator.next();
+                        sb.append(match.value);
+                        sb.append(SPACE);
+                    }
+                    sb.deleteCharAt(sb.length() - 2);
+                    sb.append("</font><br align=\"left\" /></td></tr>");
+                    sb.append("<tr><td align=\"text\"><font face=\"Courier\">");
+                } else if (match.type == TYPES.GT) {
+                    curLen -= stackLenOfLabel.pop();
+                    String repeatedSpace = new String(new char[curLen]).replace("\0", SPACE);
+                    sb.append(repeatedSpace);
+                    sb.append(match.value);
+                    sb.append("</font><br align=\"left\" /></td></tr>");
+                    sb.append("<tr><td align=\"text\"><font face=\"Courier\">");
+                } else if (match.type == TYPES.E_NUMBER || match.type == TYPES.E_LITER || match.type == TYPES.IDENT) {
+                    String repeatedSpace = new String(new char[curLen]).replace("\0", SPACE);
+                    sb.append(repeatedSpace);
+                    sb.append(match.value);
+                    sb.append("</font><br align=\"left\" /></td></tr>");
+                    sb.append("<tr><td align=\"text\"><font face=\"Courier\">");
                 }
-                sb.deleteCharAt(sb.length() - 2);
-                sb.append("</font><br align=\"left\" /></td></tr>");
-                sb.append("<tr><td align=\"text\"><font face=\"Courier\">");
-            } else if (match.type == TYPES.GT) {
-                curLen -= stackLenOfLabel.pop();
-                String repeatedSpace = new String(new char[curLen]).replace("\0", SPACE);
-                sb.append(repeatedSpace);
-                sb.append(match.value);
-                sb.append("</font><br align=\"left\" /></td></tr>");
-                sb.append("<tr><td align=\"text\"><font face=\"Courier\">");
-            } else if (match.type == TYPES.ENUMBER || match.type == TYPES.ELITER || match.type == TYPES.IDENT) {
-                String repeatedSpace = new String(new char[curLen]).replace("\0", SPACE);
-                sb.append(repeatedSpace);
-                sb.append(match.value);
-                sb.append("</font><br align=\"left\" /></td></tr>");
-                sb.append("<tr><td align=\"text\"><font face=\"Courier\">");
             }
+        } else {
+            sb.append(label);
         }
+
         sb.append(SPACE);
-        //sb.append("</font><br align=\"left\" /></td></tr>");
 
         return sb.toString();
     }
