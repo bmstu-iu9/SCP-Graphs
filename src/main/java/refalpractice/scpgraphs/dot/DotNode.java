@@ -104,13 +104,19 @@ public class DotNode {
                 while(match.type != TYPES.RPAREN) {
                     match = iterator.next();
                     sb.append(match.value);
-                    sb.append(" ");
+                    sb.append(SPACE);
                 }
                 sb.deleteCharAt(sb.length() - 2);
                 sb.append("</font><br align=\"left\" /></td></tr>");
                 sb.append("<tr><td align=\"text\"><font face=\"Courier\">");
             } else if (match.type == TYPES.GT) {
                 curLen -= stackLenOfLabel.pop();
+                String repeatedSpace = new String(new char[curLen]).replace("\0", SPACE);
+                sb.append(repeatedSpace);
+                sb.append(match.value);
+                sb.append("</font><br align=\"left\" /></td></tr>");
+                sb.append("<tr><td align=\"text\"><font face=\"Courier\">");
+            } else if (match.type == TYPES.ENUMBER || match.type == TYPES.ELITER || match.type == TYPES.IDENT) {
                 String repeatedSpace = new String(new char[curLen]).replace("\0", SPACE);
                 sb.append(repeatedSpace);
                 sb.append(match.value);
