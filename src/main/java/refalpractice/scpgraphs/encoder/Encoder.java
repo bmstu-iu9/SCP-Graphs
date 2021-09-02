@@ -11,8 +11,8 @@ import java.util.HashMap;
 
 public class Encoder {
     private final String POINT = ".", COMMA = ",", SPACE = " ", LEFT_PAREN = "(", RIGHT_PAREN = ")", SEMICOLON = ";",
-            LEFT_ANGLE_PAREN = "&lt;", RIGHT_ANGLE_PAREN = "&gt;", ASSIGNMENT = ":=", ARROW = "\u2192",
-            EMPTY = "\u03b5", OPEN_SUB = "<SUB>", CLOSE_SUB = "</SUB>",
+            LEFT_ANGLE_PAREN = "&lt;", RIGHT_ANGLE_PAREN = "&gt;", ASSIGNMENT = ":=", ARROW = "&rarr;",
+            EPSILON = "&epsilon;", OPEN_SUB = "<SUB>", CLOSE_SUB = "</SUB>", PARENS = "()", EMPTY = "",
             DEFAULT_KEY = "", REF_KEY = "-ref", TRS_KEY = "-trs";
     private final int ZERO = 0, ONE = 1, NUMBER_OF_PARAMETER_TOKENS = 5;
 
@@ -168,7 +168,7 @@ public class Encoder {
                                     functionPos.next();
                                     String encSubExpr = encodeExpr(starArgument, isLooped);
                                     if (encSubExpr.length() == ZERO)
-                                        encSubExpr = EMPTY;
+                                        encSubExpr = EPSILON;
                                     sb.append(encSubExpr);
 
                                     numberOfArgs--;
@@ -196,12 +196,12 @@ public class Encoder {
                             }
                             if (numberOfArgs != ZERO) {
                                 while (numberOfArgs > ONE) {
-                                    sb.append(EMPTY);
+                                    sb.append(EPSILON);
                                     sb.append(COMMA);
                                     sb.append(SPACE);
                                     numberOfArgs--;
                                 }
-                                sb.append(EMPTY);
+                                sb.append(EPSILON);
                             }
                             sb.append(RIGHT_PAREN);
                         }
@@ -240,7 +240,7 @@ public class Encoder {
 
                         String assignParameter = encodeExpr(assignExpr, isLooped);
                         if (assignParameter.length() == 0) {
-                            assignParameter = EMPTY;
+                            assignParameter = EPSILON;
                         }
                         sb.append(assignParameter);
                         pos.next();
@@ -276,7 +276,7 @@ public class Encoder {
         }
 
         String encodedExpression = sb.toString();
-        if (encodedExpression.compareTo("()") == 0) {
+        if (encodedExpression.compareTo(PARENS) == 0) {
             encodedExpression = EMPTY;
         }
         return encodedExpression;
