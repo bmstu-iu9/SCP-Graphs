@@ -1,0 +1,13 @@
+digraph SCPGraph {
+0[label = "Name: 0\nStatus: (Finished)\nNodeData: (() ((call Equal (arg (* A (call Gram (arg (par e N))) (par e x)) (* (call Gram (arg (par e N))) (par e y))))))"];
+0->00[label = "()"];
+00[label = "Name: 00\nStatus: (Finished)\nNodeData: (() (F))"];
+0->01[label = "()"];
+01[label = "Name: 01\nStatus: (Finished)\nNodeData: (() (F))"];
+0->02[label = "()"];
+02[label = "Name: 02\nStatus: (Finished)\nNodeData: (() ((call Equal (arg (* A (par e x)) (* (par e y))))))"];
+02->020[label = "((assign (par e N) ()))"];
+020[label = "Name: 020\nStatus: (Finished)\nNodeData: (() (T))"];
+02->021[label = "((assign (par e N) ()))"];
+021[label = "Name: 021\nStatus: (Finished)\nNodeData: (() (F))"];
+}

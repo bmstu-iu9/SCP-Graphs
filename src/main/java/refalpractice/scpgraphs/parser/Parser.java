@@ -6,9 +6,11 @@ import refalpractice.scpgraphs.lexer.Token;
 import refalpractice.scpgraphs.lexer.TokenTag;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Parser {
     private final Lexer lexer;
+    private HashSet<String> set = new HashSet<>();
 
     private void expect(int tag) throws Exception {
         Token t = lexer.peek();
@@ -49,6 +51,16 @@ public class Parser {
         return name;
     }
 
+    private String nameToString(ArrayList<String> name) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < name.size() - 1; i++) {
+            sb.append(name.get(i));
+            sb.append(' ');
+        }
+        sb.append(name.get(name.size() - 1));
+        return sb.toString();
+    }
+
     private ChildrenNode parseChildren() throws Exception {
         ChildrenNode children = new ChildrenNode();
         Token t = lexer.peek();
@@ -67,6 +79,11 @@ public class Parser {
         expect(TokenTag.TO);
         LoopedNode looped = new LoopedNode();
         looped.name = parseName();
+        String ns = nameToString(looped.name);
+        if (!set.contains(ns))
+            throw new SyntaxException("looped no name", lexer.peek());
+        else
+            set.add(ns);
         looped.assignment = parseParenGroup();
         expect(TokenTag.RPAREN);
         return looped;
@@ -95,6 +112,11 @@ public class Parser {
         Node node = new Node();
         node.status = parseParenGroup();
         node.name = parseName();
+        String ns = nameToString(node.name);
+        if (set.contains(ns))
+            throw new SyntaxException("repeated name", lexer.peek());
+        else
+            set.add(ns);
         node.edge = parseParenGroup();
         node.nodeData = parseParenGroup();
         node.subNode = parseSubNode();
